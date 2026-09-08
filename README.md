@@ -1,8 +1,8 @@
 # Little Star Explorer
 
-[Open the public website](https://little-star-explorer.samofas2011.chatgpt.site/offline/index.html) — no sign-in required. Spanish is the default; English is available from the language selector.
+[Open the public website](https://samofas2011-ux.github.io/little-star-explorer/) — no sign-in required. Spanish is the default; English is available from the language selector.
 
-Source repository: https://github.com/samofas2011-ux/little-star-explorer (private). Hosting is provided by Sites; pushing to GitHub alone does not automatically redeploy the website.
+Source repository: https://github.com/samofas2011-ux/little-star-explorer (public). Hosting is provided by GitHub Pages. Changes pushed to `main` automatically deploy; the root address opens the standalone atlas in `docs/`.
 
 A bilingual, touch-friendly sky atlas for children (Spanish by default, with an English switch), with 88 constellations and 5,044 catalog stars to apparent magnitude 6. It is an educational whole-sky atlas, not a real-time view calculated for a location or date.
 

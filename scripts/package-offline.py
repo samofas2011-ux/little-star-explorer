@@ -37,7 +37,8 @@ const urlFor=path=>new URL(path,self.registration.scope).href;
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const responses=await Promise.all(FILES.map(async path=>{
   const response=await fetch(urlFor(path),{cache:'reload',credentials:'same-origin'});
-  if(!response.ok||response.redirected)throw new Error('Offline asset unavailable: '+path);
+  const canonicalAtlasRedirect=path==='index.html'&&response.url===self.registration.scope;
+  if(!response.ok||(response.redirected&&!canonicalAtlasRedirect))throw new Error('Offline asset unavailable: '+path);
   if(path==='index.html'&&!(await response.clone().text()).includes('id="atlas-data"'))throw new Error('Expected atlas, received another page');
   return [urlFor(path),response];
  }));

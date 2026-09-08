@@ -1,10 +1,10 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const script=fs.readFileSync('public/offline/sw.js','utf8');
 const scope='https://example.test/tablet/';
-async function harness(fail=false){
+async function harness(fail=false,redirect=false){
  const handlers={},stores=new Map();let online=true,fetches=0;
  const caches={open:async key=>{if(!stores.has(key))stores.set(key,new Map());const s=stores.get(key);return {put:async(url,r)=>s.set(url,r.clone()),match:async url=>s.get(typeof url==='string'?url:url.url)?.clone()}},keys:async()=>[...stores.keys()],delete:async key=>stores.delete(key)};
- const sandbox={URL,Response,self:{registration:{scope},addEventListener:(n,f)=>handlers[n]=f,skipWaiting:async()=>{},clients:{claim:async()=>{}}},caches,fetch:async input=>{fetches++;if(!online)throw new Error('No internet');const file=new URL(typeof input==='string'?input:input.url).pathname.split('/').pop();return new Response(fail?'Sign in':fs.readFileSync('public/offline/'+file),{status:200})}};
+ const sandbox={URL,Response,self:{registration:{scope},addEventListener:(n,f)=>handlers[n]=f,skipWaiting:async()=>{},clients:{claim:async()=>{}}},caches,fetch:async input=>{fetches++;if(!online)throw new Error('No internet');const file=new URL(typeof input==='string'?input:input.url).pathname.split('/').pop();const response=new Response(fail?'Sign in':fs.readFileSync('public/offline/'+file),{status:200});if(redirect&&file==='index.html'){Object.defineProperty(response,'redirected',{value:true});Object.defineProperty(response,'url',{value:redirect==='external'?'https://example.test/login':scope})}return response}};
  vm.createContext(sandbox);vm.runInContext(script,sandbox);
  function lifetime(type){let job;handlers[type]({waitUntil:p=>job=p});return job}
  function request(path,mode='navigate',method='GET'){let result;handlers.fetch({request:{url:new URL(path,scope).href,mode,method},respondWith:p=>result=p});return result}
@@ -20,6 +20,8 @@ async function harness(fail=false){
  assert.equal(h.request('private-notes.html'),undefined);
  assert.equal(h.request('index.html','navigate','POST'),undefined);
  const bad=await harness(true);await assert.rejects(bad.lifetime('install'),/Expected atlas/);assert.equal(bad.stores.size,0,'a sign-in page must never be accepted as the offline atlas');
+ const canonical=await harness(false,true);await canonical.lifetime('install');canonical.offline();assert((await (await canonical.request('./')).text()).includes('id="atlas-data"'));
+ const external=await harness(false,'external');await assert.rejects(external.lifetime('install'),/Offline asset unavailable/);
  const manifest=JSON.parse(fs.readFileSync('public/offline/manifest.webmanifest','utf8'));
  assert.equal(manifest.start_url,'./index.html');assert.equal(manifest.scope,'./');
  for(const icon of manifest.icons)assert(fs.existsSync('public/offline/'+icon.src));

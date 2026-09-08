@@ -1,7 +1,7 @@
 'use strict';
 // This cache is restricted to the atlas folder and contains no account data.
 const PREFIX='little-star-offline:'+self.registration.scope+':';
-const CACHE=PREFIX+'3f28a99782c4';
+const CACHE=PREFIX+'6560514ce4af';
 const FILES=['index.html','manifest.webmanifest','icon-192.png','icon-512.png'];
 const urlFor=path=>new URL(path,self.registration.scope).href;
 self.addEventListener('install',event=>event.waitUntil((async()=>{

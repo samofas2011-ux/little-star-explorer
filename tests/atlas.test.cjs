@@ -55,3 +55,22 @@ assert(spoken.text.includes('Orión'));
 // The actual standalone page has no resource fetches, script imports or remote fonts.
 assert(!/<script[^>]+src=|<link[^>]+(?:stylesheet|preload)|@import|fetch\(/.test(html));
 console.log('PASS: 176 bilingual constellation views, 5,044 stars, Spanish defaults, accent-insensitive search, language persistence, selected-star/view preservation, local Spanish voice selection, standalone dependency check.');
+
+// Every zodiac figure navigates to the matching catalog entry in both languages.
+for(const lang of ['es','en']){
+ vm.runInContext(`language='${lang}';applyLanguage()`,sandbox);
+ assert.equal(elements.get('zodiacGrid').children.length,12);
+ for(let i=0;i<12;i++){
+  elements.get('zodiacGrid').children[i].onclick();
+  const id=vm.runInContext('selected',sandbox);
+  assert.equal(elements.get('choose').value,id);
+  assert.equal(elements.get('zodiacFigure').hidden,false);
+  assert(elements.get('zodiacFigure').innerHTML.includes('<path'));
+  assert.equal(elements.get('zodiacGrid').children[i]['aria-pressed'],'true');
+ }
+ vm.runInContext("select('Ori')",sandbox);
+ assert.equal(elements.get('zodiacFigure').hidden,true);
+ assert.equal(elements.get('zodiacFigure').innerHTML,'');
+}
+assert.equal(fs.readFileSync('docs/index.html','utf8'),fs.readFileSync('public/offline/index.html','utf8'));
+console.log('PASS: all 12 zodiac figures, bilingual navigation, selected state, non-zodiac clearing, and GitHub Pages parity.');

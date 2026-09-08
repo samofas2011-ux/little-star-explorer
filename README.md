@@ -31,6 +31,7 @@ Download links automatically use the current page address. The Sites website is 
 
 - One-finger drag pans; two-finger pinch zooms. Plus/minus and reset buttons provide alternatives.
 - Tap a star to show its name/catalog number, approximate color, and apparent magnitude.
+- Explore all 12 zodiac figures with bilingual illustrated buttons; select one to see its star pattern and a larger traditional figure.
 - Choose or search all 88 constellations; switch lines, names, and faint stars on/off.
 - Use read-aloud, next, surprise, and discovery prompts. Explored constellations are marked locally.
 - Keyboard: focus the sky and use arrow keys or +/−; constellation selection and controls use native keyboard interaction.
